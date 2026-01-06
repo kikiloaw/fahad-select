@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import axios from 'axios';
 import VueMultiselect from 'vue-multiselect';
 import { debounce } from 'lodash'; // Changed from 'lodash/debounce'
@@ -98,6 +98,27 @@ const props = defineProps({
         type: String,
         default: 'label'
     },
+    selectionColor: {
+        type: String,
+        default: 'transparent'
+    },
+    optionHoverColor: {
+        type: String,
+        default: '#41b883'
+    },
+    optionSelectedColor: {
+        type: String,
+        default: '#3ed15e'
+    },
+});
+
+const adjustColor = (color, amount) => {
+    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+}
+
+const highlightColorAfter = computed(() => {
+    // Lighten the hover color for the 'Press enter to select' background
+    return adjustColor(props.optionHoverColor, 40); 
 });
 
 
@@ -255,8 +276,18 @@ const onSearchChange = (search) => {
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>
 <style>
 
-.multiselect__option--selected {
-  background: #3ed15e !important;
+.custom-multiselect .multiselect__option--selected {
+  background: v-bind(optionSelectedColor) !important;
+  color: white  !important;
+}
+
+.custom-multiselect .multiselect__option--highlight {
+  background: v-bind(optionHoverColor) !important;
+  color: white  !important;
+}
+
+.custom-multiselect .multiselect__option--highlight::after {
+  background: v-bind(highlightColorAfter) !important;
   color: white  !important;
 }
 
@@ -292,7 +323,8 @@ const onSearchChange = (search) => {
     display: inline-block;
     padding: 4px 8px;
     margin-right: 4px;
-    background: transparent;
+    margin-right: 4px;
+    background: v-bind(selectionColor);
     color: #000;
     border: 1px solid #ccc;
     border-radius: 4px;

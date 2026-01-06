@@ -98,7 +98,35 @@ npm install fahad-select@latest
 ## Basic Usage
 
 Here is the new basic example of how to use `fahad-select` in your Vue component:
-added line on how to import the fahad-select properly
+## Configuration
+
+### Component Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `modelValue` | Any | `false` | The `v-model` binding value. |
+| `searchRoute` | String | `null` | **Required**. Laravel route name OR direct URL for fetching data. |
+| `multiple` | Boolean | `false` | Set to `true` to enable multiple selection. |
+| `param` | Any | `false` | Additional parameters to send with the API request. |
+| `placeholder` | String | `'Select an option'` | Placeholder text displayed when no option is selected. |
+| `label` | String | `'label'` | The object key to display as the option label. |
+| `selectionColor` | String | `'transparent'` | **(v3.4.0+)** Background color of selected tags (multiple mode). |
+| `optionHoverColor` | String | `'#41b883'` | **(v3.4.0+)** Background color when hovering over an option. |
+| `optionSelectedColor` | String | `'#3ed15e'` | **(v3.4.0+)** Background color of the currently selected option. |
+
+### Color Customization Example (New in v3.4.0)
+
+You can easily override the default colors to match your brand:
+
+```vue
+<FahadSelect
+    v-model="selected"
+    searchRoute="/api/users"
+    selectionColor="#e0e0e0"       <!-- Tag background color -->
+    optionHoverColor="#2196f3"     <!-- Option hover color (Blue) -->
+    optionSelectedColor="#1976d2"  <!-- Selected option color (Dark Blue) -->
+/>
+```
 
 
 ## latest fix
@@ -476,7 +504,13 @@ searchRoute="/api/v1/users/search"            <!-- Local API -->
 
 ## Changelog
 
-### Version 3.3.0 (Latest)
+### Version 3.4.1 (Latest)
+- 🎉 **NEW**: Added individual customization for `selectionColor` (default: transparent)
+- 🎉 **NEW**: Added `optionHoverColor` prop (default: #41b883)
+- 🎉 **NEW**: Added `optionSelectedColor` prop (default: #3ed15e)
+- ✅ **Fixed**: Highlight color (Press enter to select) now auto-adjusts to be lighter than `optionHoverColor`
+
+### Version 3.3.0
 - 🎉 **NEW**: Added Pure Vue.js support (not just Laravel Inertia)
 - 🎉 **NEW**: Automatic detection of URLs vs route names in `searchRoute` prop
 - 🎉 **NEW**: Support for absolute URLs (`https://...`) and relative URLs (`/...`)
