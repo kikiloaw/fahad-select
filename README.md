@@ -2,54 +2,89 @@
 
 **fahad-select** is a Vue.js component built using `vue-multiselect`, designed for seamless integration with backend systems such as Laravel. It functions as a dynamic, API-driven select dropdown similar to `Select2`, but customized for Vue applications.
 
+---
 
-## Important!
-this only works on laravel inertia vue. will update later for vue only components
-just contact for more question
+## 🚀 MAJOR UPDATE - Version 3.3.0
 
+### ⚡ Now Works with Pure Vue.js!
 
-## Big Update Fix
-importing to vue has an error
-now you can simply
+**fahad-select** now supports **BOTH** Laravel Inertia and Pure Vue.js applications!
+
+#### What's New:
+- ✅ **Pure Vue.js Support**: You can now use `fahad-select` in pure Vue.js applications (not just Laravel Inertia)
+- ✅ **Automatic URL Detection**: The `searchRoute` prop now automatically detects if you're passing a Laravel route name or a direct URL
+- ✅ **Backward Compatible**: All existing Laravel Inertia code continues to work without any changes
+- ✅ **Multiple URL Formats**: Supports absolute URLs (`https://api.example.com/search`), relative URLs (`/search/names`), and Laravel route names (`list.dropdownSearch.address`)
+
+#### How It Works:
+
+**For Laravel Inertia (unchanged):**
+```vue
+<FahadSelect searchRoute="list.dropdownSearch.address" ... />
+```
+
+**For Pure Vue.js (new!):**
+```vue
+<FahadSelect searchRoute="https://api.example.com/search" ... />
+<FahadSelect searchRoute="/search/names" ... />
+```
+
+The component automatically detects if `searchRoute` is:
+- A **URL** (starts with `http://`, `https://`, or `/`) → Uses directly
+- A **route name** (like `list.dropdownSearch.address`) → Uses Laravel's `route()` helper
+
+**No breaking changes!** Your existing code will work exactly as before.
+
+---
+
+## Previous Updates
+
+### Import Fix
+importing to vue has an error, now you can simply:
 ```bash
-    import FahadSelect from 'fahad-select';
-    import 'fahad-select/dist/style.css';
+import FahadSelect from 'fahad-select';
+import 'fahad-select/dist/style.css';
 
-    //added an isntruction for relaoding select
-    formref.value.reload()
-````
+//added an instruction for reloading select
+formref.value.reload()
+```
 
+### Pre-selected Values
+You can now assign pre-selected values:
+
+**Single mode:**
 ```bash
-   now you can assign pre selected value using like this for single mode
-   form.value.member_id = {
-     id: 1,
-     label: 'label'
-   }
-   
-  for multiple mode
-  form.value.member_id.push({
-     id: 1,
-     label: 'label'
-  })
-  form.value.member_id.push({
-     id: 2,
-     label: 'label 2'
-  })
-   
-````
+form.value.member_id = {
+  id: 1,
+  label: 'label'
+}
+```
+
+**Multiple mode:**
+```bash
+form.value.member_id.push({
+  id: 1,
+  label: 'label'
+})
+form.value.member_id.push({
+  id: 2,
+  label: 'label 2'
+})
+```
 
 
 
 ## Features
-- **Vue.js based**: Laravel Inertia.
-- **Vue.js based**: Built with Vue.js for easy integration with Vue applications.
-- **API-Driven**: Fetch data asynchronously from a backend (e.g., Laravel) using API calls.
-- **Customizable**: Supports dynamic placeholders, labels, and multiple selection.
-- **Debounced Search**: Built-in debounced search to optimize API requests.
-- **Loading State**: Displays a loading spinner while fetching data.
-- **Supports Multiple Selection**: Can be configured for single or multiple selections.
-- **Event Handlers**: Includes customizable event handlers for better control over selections.
-- **Tagging**: Supports adding custom tags if the option doesn't exist.
+- **Universal Compatibility**: Works with **Laravel Inertia** and **Pure Vue.js** applications
+- **Vue.js based**: Built with Vue.js 3 for easy integration
+- **API-Driven**: Fetch data asynchronously from any backend using API calls
+- **Smart Route Detection**: Automatically detects route names vs URLs
+- **Customizable**: Supports dynamic placeholders, labels, and multiple selection
+- **Debounced Search**: Built-in debounced search to optimize API requests
+- **Loading State**: Displays a loading spinner while fetching data
+- **Multiple Selection**: Can be configured for single or multiple selections
+- **Event Handlers**: Includes customizable event handlers for better control
+- **Group Support**: Supports grouped options with customizable selection
 
 ## Installation
 
@@ -233,6 +268,8 @@ return = [
 ```
 
 
+### For Laravel Inertia Vue Applications
+
 ```vue
 
 <template>
@@ -267,6 +304,59 @@ return = [
         formref.value.reload()
     }
 
+</script>
+```
+
+### For Pure Vue.js Applications
+
+Now `searchRoute` also accepts direct URLs! Just pass the URL string instead of a route name:
+
+```vue
+<template>
+    <!-- Using absolute URL (external API) -->
+    <FahadSelect
+        ref="formref1"
+        v-model="form.member_id"
+        @triggerChange="callMe"
+        searchRoute="https://api.example.com/search"
+        :param="{municipality: form.municipality, brgy: form.brgy}"
+        :multiple="false"
+        placeholder="Select an option"
+        label="label"
+    />
+    
+    <!-- Using relative URL (same domain API) -->
+    <FahadSelect
+        ref="formref2"
+        v-model="form.member_id2"
+        @triggerChange="callMe"
+        searchRoute="/search/names"
+        :param="{category: form.category}"
+        :multiple="false"
+        placeholder="Select a name"
+    />
+</template>
+
+<script setup>
+    import { ref } from 'vue';
+    import FahadSelect from 'fahad-select';
+    import 'fahad-select/dist/style.css';
+
+    const formref1 = ref(null);
+    const formref2 = ref(null);
+    const form = ref({
+        member_id: null,
+        member_id2: null
+    });
+
+    const callMe = (selectedData) => {
+        console.log('Selected:', selectedData);
+    };
+
+    // Reload the select
+    const reloadSelect = () => {
+        formref1.value.reload();
+    };
 </script>
 ```
 
@@ -335,6 +425,76 @@ public function dropdownSearch_address(Request $request){
     ]);
 }
 ```
+
+## Backend API Requirements
+
+Whether using Laravel Inertia (`searchRoute`) or Pure Vue (`searchUrl`), your backend API must return data in this format:
+
+```json
+{
+  "results": [
+    {
+      "id": 1,
+      "label": "Display Name"
+    }
+  ]
+}
+```
+
+**Query Parameters:**
+- `query_`: Search term (string)
+- `param`: Optional parameters object
+
+**Response Format:**
+- Must include a `results` array
+- Each item must have an `id` field
+- Display text should be in either `label` or the field specified by the `label` prop
+
+## Migration Guide
+
+### From Laravel Inertia to Pure Vue
+
+Use the same `searchRoute` prop! Just pass the URL instead of route name:
+
+```vue
+<!-- Laravel Inertia (route name) -->
+searchRoute="list.dropdownSearch.address"
+
+<!-- Pure Vue (direct URL) -->
+searchRoute="https://api.example.com/search"  <!-- Absolute URL -->
+searchRoute="/search/names"                   <!-- Relative URL -->
+searchRoute="/api/v1/users/search"            <!-- Local API -->
+```
+
+**How it works:**
+- If `searchRoute` starts with `http://`, `https://`, or `/` → treated as URL
+- Otherwise → treated as Laravel route name (uses `route()` helper)
+
+**No props to change!** Existing Laravel Inertia code continues to work exactly as before.
+
+---
+
+## Changelog
+
+### Version 3.3.0 (Latest)
+- 🎉 **NEW**: Added Pure Vue.js support (not just Laravel Inertia)
+- 🎉 **NEW**: Automatic detection of URLs vs route names in `searchRoute` prop
+- 🎉 **NEW**: Support for absolute URLs (`https://...`) and relative URLs (`/...`)
+- ✅ **Improved**: Better documentation with examples for both Laravel Inertia and Pure Vue.js
+- ✅ **Maintained**: Full backward compatibility - no breaking changes
+
+### Version 3.2.x
+- ✅ Group data support with customizable selection
+- ✅ Fixed data assignment after reload()
+- ✅ Fixed multiple selection issues
+- ✅ Fixed text wrapping in selected options
+
+### Version 3.1.x
+- ✅ Added `reload()` method for cascaded selects
+- ✅ Pre-selected values support
+- ✅ Import fixes
+
+---
 
 ## License
 

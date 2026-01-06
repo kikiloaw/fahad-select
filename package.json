@@ -1,6 +1,6 @@
 {
   "name": "fahad-select",
-  "version": "3.2.5",
+  "version": "3.3.0",
   "description": "A custom Vue select component",
   "main": "dist/fahad-select.umd.js",
   "module": "dist/fahad-select.mjs",

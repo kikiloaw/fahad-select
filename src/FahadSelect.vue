@@ -74,7 +74,13 @@ const props = defineProps({
     },
     searchRoute: {
         type: String,
-        required: true,
+        required: false,
+        default: null,
+    },
+    searchUrl: {
+        type: String,
+        required: false,
+        default: null,
     },
     multiple: {
         type: Boolean,
@@ -133,13 +139,43 @@ watch(() => props.modelValue, (newVal) => {
 
 
 onMounted(() => {
+    // Validate that searchRoute is provided
+    if (!props.searchRoute && !props.searchUrl) {
+        console.error('FahadSelect: searchRoute prop is required (can be route name or URL)');
+        return;
+    }
     fetchData('')
 })
 
 const fetchData = async (search) => {
     loading.value = true;
     try {
-        const response = await axios.get(route(props.searchRoute), {
+        // Determine the URL to use
+        let url;
+        if (props.searchRoute) {
+            // Check if searchRoute is a URL (starts with http://, https://, or /)
+            const isUrl = props.searchRoute.startsWith('http://') || 
+                         props.searchRoute.startsWith('https://') || 
+                         props.searchRoute.startsWith('/');
+            
+            if (isUrl) {
+                // Use direct URL for pure Vue applications (supports both absolute and relative URLs)
+                // e.g., "https://api.example.com/search" or "/search/names"
+                url = props.searchRoute;
+            } else {
+                // Use Laravel route helper for Inertia applications
+                url = route(props.searchRoute);
+            }
+        } else if (props.searchUrl) {
+            // Fallback to searchUrl if provided (backward compatibility)
+            url = props.searchUrl;
+        } else {
+            console.error('FahadSelect: Either searchRoute or searchUrl must be provided');
+            loading.value = false;
+            return;
+        }
+        
+        const response = await axios.get(url, {
             params: {
                 query_: search,
                 param: props.param
