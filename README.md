@@ -2,38 +2,36 @@
 
 **fahad-select** is a Vue.js component built using `vue-multiselect`, designed for seamless integration with backend systems such as Laravel. It functions as a dynamic, API-driven select dropdown similar to `Select2`, but customized for Vue applications.
 
+
+> **🚀 Explore the Demo**: Check out the [Fahad Select Demo Repository, Simple Table Demo Repository](https://github.com/kikiloaw/simple-table-demo.git) for a complete documentation site with live server-side examples, seeding, and source code.
+
 ---
 
-## 🚀 MAJOR UPDATE - Version 3.3.0
+## 🚀 MAJOR UPDATE - Version 3.4.1
 
-### ⚡ Now Works with Pure Vue.js!
+### 🎨 Complete Color Customization!
 
-**fahad-select** now supports **BOTH** Laravel Inertia and Pure Vue.js applications!
+**fahad-select** now allows you to fully customize the colors to match your brand identity without needing CSS overrides!
 
 #### What's New:
-- ✅ **Pure Vue.js Support**: You can now use `fahad-select` in pure Vue.js applications (not just Laravel Inertia)
-- ✅ **Automatic URL Detection**: The `searchRoute` prop now automatically detects if you're passing a Laravel route name or a direct URL
-- ✅ **Backward Compatible**: All existing Laravel Inertia code continues to work without any changes
-- ✅ **Multiple URL Formats**: Supports absolute URLs (`https://api.example.com/search`), relative URLs (`/search/names`), and Laravel route names (`list.dropdownSearch.address`)
+- 🎉 **Custom Selection Color**: Control the background color of selected tags (in multiple mode)
+- 🎉 **Custom Hover Color**: Change the background color when hovering over options
+- 🎉 **Custom Selected Option Color**: Set a specific color for the currently selected option in the list
+- ✅ **Smart Highlighting**: The keyboard navigation highlight color automatically adjusts to be a lighter version of your hover color
 
-#### How It Works:
+#### How to Use:
 
-**For Laravel Inertia (unchanged):**
+You can now use these new props to style your select component:
+
 ```vue
-<FahadSelect searchRoute="list.dropdownSearch.address" ... />
+<FahadSelect
+    v-model="selected"
+    searchRoute="/api/users"
+    selectionColor="#e0e0e0"       <!-- Tag background color -->
+    optionHoverColor="#2196f3"     <!-- Option hover color (Blue) -->
+    optionSelectedColor="#1976d2"  <!-- Selected option color (Dark Blue) -->
+/>
 ```
-
-**For Pure Vue.js (new!):**
-```vue
-<FahadSelect searchRoute="https://api.example.com/search" ... />
-<FahadSelect searchRoute="/search/names" ... />
-```
-
-The component automatically detects if `searchRoute` is:
-- A **URL** (starts with `http://`, `https://`, or `/`) → Uses directly
-- A **route name** (like `list.dropdownSearch.address`) → Uses Laravel's `route()` helper
-
-**No breaking changes!** Your existing code will work exactly as before.
 
 ---
 
