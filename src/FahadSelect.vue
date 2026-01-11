@@ -1,6 +1,8 @@
 <template>
-    <div>
+    <div :style="{ position: 'relative', zIndex: isActive ? 99999 : 'auto' }">
         <VueMultiselect
+            @open="isActive = true"
+            @close="isActive = false"
             v-model="selectedOption"
             :options="data"
             :track-by="'id'"
@@ -123,6 +125,7 @@ const highlightColorAfter = computed(() => {
 
 
 const emit = defineEmits(['update:modelValue', 'triggerChange', 'reload']);
+const isActive = ref(false);
 const isGrouped = ref(false);
 const data = ref([]);
 const loading = ref(false);
@@ -306,6 +309,7 @@ const onSearchChange = (search) => {
 .multiselect__content-wrapper {
     max-height: 300px !important;
     overflow-y: auto;
+    z-index: 9999 !important;
 }
 
 .multiselect__search-wrapper {
